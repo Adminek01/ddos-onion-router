@@ -43,6 +43,9 @@ def start_attack(ip, port, num_packets=None, duration=None, log_file=None):
 
     sent = 0
     try:
+        if log_file is None:
+            log_file = ''
+
         with open(log_file, 'a') as log:
             start_time = time.time()
             while True:
